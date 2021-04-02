@@ -25,7 +25,9 @@ rules = {'of thrirds': 1}
 
 LN_SZ = 1
 DEFAULT_WIDTH = 100
-DEFAULT_RATIO = [4,3]
+DEFAULT_RATIO = [4, 3]
+
+MASTER_DIR = '../pictures/'
 
 
 
@@ -37,24 +39,10 @@ def get_dim(width=DEFAULT_WIDTH, ratio=DEFAULT_RATIO):
     
     my_heigh = int(my_width/my_ratio)
     
-    return my_width, my_heigh, my_ratio
+    return my_width, my_heigh, ratio
 
 
-def create_img(spots_pack):
-    
-    my_width, my_heigh, my_ratio = get_dim()
-    
-    data = np.zeros((my_heigh, my_width,3), dtype=np.uint8)+255
-    
-    data[np.where(spots_pack == 1)]  = [0,0,0]
-    
-    img = Image.fromarray(data)
-    
-    img.save('my.png')
-    #img.show()
-
-
-def c_rule_of_thirds():
+def rule_of_thirds():
     
     my_width, my_heigh, my_ratio = get_dim()
     
@@ -81,13 +69,36 @@ def c_rule_of_thirds():
     
     
     return line_spots
+
+def create_img(name = 'rule_of_thirds', spots_pack=rule_of_thirds()):
+    
+    my_width, my_heigh, my_ratio = get_dim()
+    
+    data = np.zeros((my_heigh, my_width,3), dtype=np.uint8)+255
+    
+    data[np.where(spots_pack == 1)]  = [0,0,0]
+    
+    img = Image.fromarray(data)
+    
+    img_name_path = f'{MASTER_DIR}{name}_{my_ratio[0]}_{my_ratio[1]}.png'
+    
+    img.save(img_name_path)
+    #img.show()
+
     
 
 
-a = c_rule_of_thirds()
+
+create_img()
 
 
-create_img(a)
+
+
+
+
+
+
+
 
 
 
