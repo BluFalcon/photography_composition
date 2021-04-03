@@ -71,16 +71,19 @@ def combine_rulez(rulez = []):
     for e, rule in enumerate(rulez):
         line_spots += rule[1]*(e+1)
         
-    return line_spots
+    return 'comb', line_spots
     
     
 
 rules = [gr.phi_grid(),
-         rule_of_thirds()]
+        rule_of_thirds(),
+        gr.phi_triangles()]
 
 spots = combine_rulez(rules)
 
-create_img(('kati', spots))
+
+#spots = gr.phi_triangles()
+create_img(spots)
 
 
 

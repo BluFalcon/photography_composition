@@ -13,7 +13,7 @@ import math
 
 LINE_SIZE = 1
 DEFAULT_WIDTH = 1000
-DEFAULT_RATIO = [16, 9]
+DEFAULT_RATIO = [4, 3] # width, height 
 
 MASTER_DIR = '../pictures/'
 
@@ -38,14 +38,23 @@ def solve_quadratic(a,b,c):
     b = 10
     c = -100
     '''
+    
+    if c>0:
+        print('i think.. c is negative...')
     # calculate the discriminant
     d = (b**2) - (4*a*c)
     
     # find two solutions
-    sol_1 = (-b-math.sqrt(d))/(2*a)
-    sol_2 = (-b+math.sqrt(d))/(2*a)
+    try:
+        sol_1 = (-b-math.sqrt(d))/(2*a)
+    except:
+        sol_1 = 0
     
-    print(f'The solution are {sol_1} and {sol_2}')
+    try:
+        sol_2 = (-b+math.sqrt(d))/(2*a)
+    except:
+        sol_2 = 0
+    print(f'The solution are {sol_1} and {sol_2}', flush=True)
     
     if sol_1 > 0 > sol_2:
         return int(sol_1)
@@ -53,5 +62,4 @@ def solve_quadratic(a,b,c):
     if sol_2 > 0 > sol_1:
         return int(sol_2)
     
-    raise ValueError
-    # return 'error'
+    return 'error'
