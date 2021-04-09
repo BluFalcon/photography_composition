@@ -7,27 +7,37 @@ Created on Fri Apr  2 20:27:38 2021
 """
 
 
+        
+from fractions import Fraction
 import math
 # import nupmy as np
 
 
 LINE_SIZE = 1
-DEFAULT_WIDTH = 1000
-DEFAULT_RATIO = [4, 3] # width, height 
+DEFAULT_WIDTH = 1920
+DEFAULT_HEIGHT = None
+DEFAULT_RATIO = [13.214, 10] # width, height 
 
 MASTER_DIR = '../pictures/'
 
 
-
-def get_dim(width=DEFAULT_WIDTH, ratio=DEFAULT_RATIO):
+def get_dim(width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, ratio=DEFAULT_RATIO):
 
     # default 
-    my_width = width
-    my_ratio = ratio[0]/ratio[1]
     
-    my_heigh = int(my_width/my_ratio)
+    if height:
+
+        temp = Fraction(width, height)
+        ratio = [temp.numerator, temp.denominator]
+        return width, height, ratio
     
-    return my_width, my_heigh, ratio
+    else:
+        my_width = width
+        my_ratio = ratio[0]/ratio[1]
+        
+        my_heigh = int(my_width/my_ratio)
+        
+        return my_width, my_heigh, ratio
 
 
 

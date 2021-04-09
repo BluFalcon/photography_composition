@@ -40,9 +40,14 @@ def rule_of_thirds(dims = con.get_dim()):
     return 'rule_of_thirds', line_spots
 
 
-def create_img(data_pack = rule_of_thirds()):
+def create_img(data_pack = rule_of_thirds(), flip =False):
     
     name, spots_pack = data_pack
+    
+    if flip:
+        print('flip')
+        spots_pack = np.rot90(spots_pack)
+        spots_pack = np.rot90(spots_pack)
     
     my_width, my_heigh, my_ratio = con.get_dim()
     
@@ -58,15 +63,20 @@ def create_img(data_pack = rule_of_thirds()):
     img_name_path = f'{con.MASTER_DIR}{name}_{my_ratio[0]}_{my_ratio[1]}.png'
     
     img.convert('RGBA')
-    img.save(img_name_path)
-    #img.show()
+    #img.save(img_name_path)
+    img.show()
+    
+    # return spots_pack
 
     
 def combine_rulez(rulez = []):
     
-    my_width, my_heigh, my_ratio = con.get_dim()
+    dims = rulez[0][1].shape
     
-    line_spots = np.zeros((my_heigh, my_width), dtype=np.uint8)
+    for rule in rulez[1:]:
+        assert dims == rule[1].shape
+
+    line_spots = np.zeros(dims, dtype=np.uint8)
     
     for e, rule in enumerate(rulez):
         line_spots += rule[1]*(e+1)
@@ -74,16 +84,17 @@ def combine_rulez(rulez = []):
     return 'comb', line_spots
     
     
-
+'''
 rules = [gr.phi_grid(),
         rule_of_thirds(),
         gr.phi_triangles()]
 
 spots = combine_rulez(rules)
+'''
 
 
 #spots = gr.phi_triangles()
-create_img(spots)
+# create_img(spots, flip=True)
 
 
 
