@@ -93,8 +93,8 @@ spots = combine_rulez(rules)
 '''
 
 
-#spots = gr.phi_triangles()
-# create_img(spots, flip=True)
+spots = gr.golden_boxes()
+create_img(spots)#, flip=True)
 
 
 

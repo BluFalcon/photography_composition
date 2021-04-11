@@ -19,34 +19,64 @@ import cv2
 
 
 # open device 
-cap = cv2.VideoCapture(0)
+n=0
+
+while(n<5):
+
+    print(n)
+    try:
+        cap = cv2.VideoCapture(n)
+        ret, frame = cap.read()
+        temp_dims = frame.shape
+        break
+    except:             
+        cap.release()
+        cv2.destroyAllWindows()
+
+        # go to the next device
+        n += 1
+
+
+'''
+for now found n manual :) 
+'''
 
 # get a frame
 ret, frame = cap.read()
-
 temp_dims = frame.shape
 
 dims = constants.get_dim(height=temp_dims[0], width=temp_dims[1])
 
 
 #  create lines
-rules = [gr.phi_grid(dims),
-        compositions.rule_of_thirds(dims),
-        gr.phi_triangles(dims)]
+rules = [#gr.phi_grid(dims),
+        #compositions.rule_of_thirds(dims),
+        #gr.golden_triangles(dims),
+        gr.golden_boxes(dims),
+        ]
+
+
 
 # combine them to one array
 spots = compositions.combine_rulez(rules)
+
 
 
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
+    frame = cv2.flip(frame, 1)
+    
+    frame[np.where(spots[1] > 0)]  = [255,255,102]
+    
+    '''
+    
     frame[np.where(spots[1] == 1)]  = [0,0,255]
     frame[np.where(spots[1] == 2)]  = [0,0,255]
     frame[np.where(spots[1] == 3)]  = [0,0,255]
     frame[np.where(spots[1] == 4)]  = [0,0,255]
-    
+    '''
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_RGB2XYZ)
 

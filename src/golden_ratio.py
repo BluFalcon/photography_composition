@@ -73,7 +73,7 @@ def phi_grid(dims = con.get_dim()):
     
     # 2nd horizontal
     spot = int(my_heigh-phi_height)
-    line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE: 1] = 1
+    line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, :] = 1
     
     return 'phi_grid', line_spots
 
@@ -177,7 +177,11 @@ def create_digonial(x0, y0, x1, y1, line_spots):
         
     return line_spots
         
-def phi_triangles(dims = con.get_dim()):
+
+def golden_triangles(dims = con.get_dim()):
+    '''
+    not very clear what a golder triangle is duh.. but anyway :P
+    '''
     
     my_width, my_heigh, my_ratio  = dims
     
@@ -185,11 +189,13 @@ def phi_triangles(dims = con.get_dim()):
     line_spots = np.zeros((my_heigh, my_width), dtype=np.uint8)
     
     # find diagonial spots for triangle
-    p_w = int(my_width/3)
-    p_h = int(my_heigh/3)
+    p_w = con.solve_quadratic(1,my_width,-my_width**2)
+    p_h = con.solve_quadratic(1,my_heigh,-my_heigh**2)
     
+    # nope ?  it can be used thought :)
+    #p_w = int(my_width/3)
+    #p_h = int(my_heigh/3)
     
-    #auto 8a ginei func ?
     
     # 1st diagonial # create_digonial(x0, y0, x1, y1, line_spots):
     line_spots = create_digonial(0, 0, my_width, my_heigh, line_spots)
@@ -197,11 +203,124 @@ def phi_triangles(dims = con.get_dim()):
     print(p_w)
     print(p_h)
     # triangle in left from line to up right corner
-    line_spots  = create_digonial(p_w, p_h, 0, my_heigh, line_spots)
+    line_spots  = create_digonial(my_width - p_w, my_heigh- p_h, 0, my_heigh, line_spots)
 
     # triangle in left from line to  down left corner
-    line_spots  = create_digonial(2*p_w, 2*p_h, my_width, 0, line_spots)
+    line_spots  = create_digonial(p_w, p_h, my_width, 0, line_spots)
     
     return 'trigwna', line_spots
 
 
+
+def golden_boxes(dims = con.get_dim()):
+    
+    
+    my_width, my_heigh, my_ratio  = dims
+    
+    # init array 
+    line_spots = np.zeros((my_heigh, my_width), dtype=np.uint8)
+    
+    if my_ratio[0] > my_ratio[1]:
+
+        dim_to_draw = 'width'
+    else:    
+        dim_to_draw = 'height'
+    
+    #line_spots = draw_phi_boxes(dim_to_draw, [0,my_width], [0,my_heigh], line_spots)
+    line_spots = draw_phi_boxes_inner(dim_to_draw,0,0, [0,my_width], [0,my_heigh], line_spots)
+    
+    return 'golden boxes', line_spots
+    
+    
+    
+def draw_phi_boxes(dim_to_draw , width, height, line_spots):
+
+    if dim_to_draw == 'width':
+    
+        my_width = width[1] - width[0]
+        
+        print('width', width)
+        if my_width < 20:
+            return line_spots
+
+        phi_width = con.solve_quadratic(1,my_width,-my_width**2)
+    
+        spot = int(phi_width) + width[0]
+        line_spots[height[0]:, spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1        
+        
+        return draw_phi_boxes('height' , [spot, width[1]], height, line_spots)
+            
+    
+    if dim_to_draw == 'height':
+        
+        my_height = height[1] - height[0]
+        
+        print('height', height)
+        
+        if my_height < 20:
+            return line_spots
+
+        phi_height = con.solve_quadratic(1,my_height,-my_height**2)    
+
+        spot = int(phi_height) + height[0]        
+        line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, width[0]:] = 1
+        
+        return draw_phi_boxes('width',  width, [spot, height[1]], line_spots)
+    
+
+
+    
+def draw_phi_boxes_inner(dim_to_draw, ws , hs, width, height, line_spots):
+
+
+    if dim_to_draw == 'width':
+    
+        my_width = width[1] - width[0]
+        
+        print('width', width)
+        if my_width < 20:
+            return line_spots
+
+        phi_width = con.solve_quadratic(1,my_width,-my_width**2)
+    
+        if ws % 2 :
+                
+            spot = int(phi_width) + width[0]
+            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1        
+            
+            return draw_phi_boxes_inner('height',ws+1, hs , [spot, width[1]], height, line_spots)
+        else:
+            
+    
+            spot = width[1] - int(phi_width) 
+            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1        
+            
+            return draw_phi_boxes_inner('height',ws+1, hs , [width[0], spot], height, line_spots)
+        
+        
+    if dim_to_draw == 'height':
+        
+        my_height = height[1] - height[0]
+        
+        print('height', height)
+        
+        if my_height < 20:
+            return line_spots
+
+        phi_height = con.solve_quadratic(1,my_height,-my_height**2)    
+
+    
+
+        if hs % 2 :
+                    
+            spot = int(phi_height) + height[0]        
+            line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, width[0]:width[1]] = 1
+            
+            return draw_phi_boxes_inner('width',ws,hs+1,  width, [spot, height[1]], line_spots)
+        else:
+            
+                
+            spot = height[1]  - int(phi_height)       
+            line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, width[0]:width[1]] = 1
+            
+            return draw_phi_boxes_inner('width',ws,hs+1,  width, [height[0], spot], line_spots)

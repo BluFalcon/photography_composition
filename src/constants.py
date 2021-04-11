@@ -14,7 +14,7 @@ import math
 
 
 LINE_SIZE = 1
-DEFAULT_WIDTH = 1920
+DEFAULT_WIDTH = 1024
 DEFAULT_HEIGHT = None
 DEFAULT_RATIO = [13.214, 10] # width, height 
 
