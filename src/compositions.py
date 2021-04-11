@@ -56,20 +56,20 @@ def create_img(data_pack = rule_of_thirds(), flip =False):
     data[np.where(spots_pack == 1)]  = [0,0,255]
     data[np.where(spots_pack == 2)]  = [0,255,0]
     data[np.where(spots_pack == 3)]  = [255,0,0]
-    data[np.where(spots_pack == 4)]  = [0,0,0]
+    data[np.where(spots_pack > 3)]  = [200,200,150]
     
     img = Image.fromarray(data)
     
     img_name_path = f'{con.MASTER_DIR}{name}_{my_ratio[0]}_{my_ratio[1]}.png'
     
     img.convert('RGBA')
-    #img.save(img_name_path)
+    img.save(img_name_path)
     img.show()
     
     # return spots_pack
 
     
-def combine_rulez(rulez = []):
+def combine_rulez(rulez = [],flip =0):
     
     dims = rulez[0][1].shape
     
@@ -79,21 +79,31 @@ def combine_rulez(rulez = []):
     line_spots = np.zeros(dims, dtype=np.uint8)
     
     for e, rule in enumerate(rulez):
-        line_spots += rule[1]*(e+1)
+        
+        tmp_rule = rule[1]
+        tmp_rule = tmp_rule[::-1]
+        if flip:
+            print('flip')
+            tmp_rule = np.rot90(tmp_rule)
+            tmp_rule = np.rot90(tmp_rule)
+        
+        line_spots += tmp_rule*(e+1)
         
     return 'comb', line_spots
     
     
-'''
+
 rules = [gr.phi_grid(),
         rule_of_thirds(),
-        gr.phi_triangles()]
+        gr.golden_triangles(),
+        gr.golden_boxes(),
+        ]
 
 spots = combine_rulez(rules)
-'''
 
 
-spots = gr.golden_boxes()
+
+#spots = gr.golden_boxes()
 create_img(spots)#, flip=True)
 
 

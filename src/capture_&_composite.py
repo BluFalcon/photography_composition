@@ -60,13 +60,14 @@ rules = [#gr.phi_grid(dims),
 # combine them to one array
 spots = compositions.combine_rulez(rules)
 
-
+cv2.namedWindow("frame", cv2.WINDOW_NORMAL)
+cv2.resizeWindow('frame', 900, 700) 
 
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    frame = cv2.flip(frame, 1)
+    # frame = cv2.flip(frame, 1)
     
     frame[np.where(spots[1] > 0)]  = [255,255,102]
     

@@ -272,28 +272,35 @@ def draw_phi_boxes(dim_to_draw , width, height, line_spots):
     
 def draw_phi_boxes_inner(dim_to_draw, ws , hs, width, height, line_spots):
 
-
+    quarter = 0 # gia ton kuklo
+    
     if dim_to_draw == 'width':
     
         my_width = width[1] - width[0]
         
-        print('width', width)
         if my_width < 20:
             return line_spots
 
         phi_width = con.solve_quadratic(1,my_width,-my_width**2)
     
-        if ws % 2 :
+        if  ws % 2 :
+            quarter = 1
                 
             spot = int(phi_width) + width[0]
-            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1        
+            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1
+            
+            
+            line_spots = draw_arc(line_spots,quarter,height, [width[0], spot])
             
             return draw_phi_boxes_inner('height',ws+1, hs , [spot, width[1]], height, line_spots)
         else:
             
-    
+            
+            quarter = 3
             spot = width[1] - int(phi_width) 
-            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1        
+            line_spots[height[0]:height[1], spot-con.LINE_SIZE: spot+con.LINE_SIZE] = 1
+            
+            line_spots = draw_arc(line_spots, quarter ,height, [spot, width[1]])
             
             return draw_phi_boxes_inner('height',ws+1, hs , [width[0], spot], height, line_spots)
         
@@ -301,26 +308,74 @@ def draw_phi_boxes_inner(dim_to_draw, ws , hs, width, height, line_spots):
     if dim_to_draw == 'height':
         
         my_height = height[1] - height[0]
-        
-        print('height', height)
-        
+                
         if my_height < 20:
             return line_spots
 
         phi_height = con.solve_quadratic(1,my_height,-my_height**2)    
 
     
-
-        if hs % 2 :
-                    
+        if  hs % 2 :           
+            
+            quarter = 2
             spot = int(phi_height) + height[0]        
             line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, width[0]:width[1]] = 1
             
-            return draw_phi_boxes_inner('width',ws,hs+1,  width, [spot, height[1]], line_spots)
-        else:
+            line_spots = draw_arc(line_spots, quarter, [height[0], spot], width)
             
-                
+            return draw_phi_boxes_inner('width',ws,hs+1,  width, [spot, height[1]], line_spots)
+        else:   
+
+            quarter = 4                         
             spot = height[1]  - int(phi_height)       
             line_spots[spot-con.LINE_SIZE: spot+con.LINE_SIZE, width[0]:width[1]] = 1
             
+            line_spots = draw_arc(line_spots, quarter, [spot, height[1]], width)
             return draw_phi_boxes_inner('width',ws,hs+1,  width, [height[0], spot], line_spots)
+        
+from math import sqrt
+
+def draw_arc(line_spots, quarter  , height, width):
+    
+    
+    #if quarter%4 :
+    print(f'h= {height}, w = {width}')
+
+
+    R = 1
+    w_r = abs(width[0] - width[1])
+    h_r = abs(height[0] - height[1])
+    
+    
+    paxos = 5 * 1/w_r
+    
+    for h in range(h_r):
+        for w in range(w_r):
+    
+            #temp = sqrt( h**2 + w**2)
+            
+            # i did not found it anywhere but it's like an ellipse :) https://en.wikipedia.org/wiki/Ellipse
+            # we do not need precision but approximation... enrgineers γαρ ...
+            temp = (h/h_r)**2 + (w/w_r)**2
+            
+            if temp - paxos < R < temp + paxos:
+                
+                if quarter == 1:
+                    
+                    line_spots[height[1]-h,width[1] - w] = 1
+                elif quarter == 2:
+                    
+                    
+                    line_spots[ height[1]-h, w + width[0]] = 2
+                elif quarter == 3:
+                    
+                    line_spots[h + height[0], w + width[0]] = 3
+                elif quarter == 4 :
+                    
+                    line_spots[h + height[0], width[1] - w] = 4
+                else:
+                    print('error')
+                
+    
+    return line_spots
+
