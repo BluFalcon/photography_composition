@@ -91,20 +91,65 @@ def combine_rulez(rulez = [],flip =0):
         
     return 'comb', line_spots
     
-    
 
+
+
+def draw_rules_to_img(img_name = "P1430428.JPG"):
+    
+    # lol  without copy we get  WRITEABLE : False   - and could not acces the item
+    ar_im = np.asarray(Image.open(img_name)).copy()
+    
+    
+    # ar_im.flags #  to get flags of array
+    
+    temp_dims = ar_im.shape
+    
+    dims = con.get_dim(height=temp_dims[0], width=temp_dims[1])
+
+    rules = [gr.phi_grid(dims),
+            rule_of_thirds(dims),
+            gr.golden_triangles(dims),
+            gr.golden_boxes(dims),
+           ]
+    
+    spots = combine_rulez(rules)
+    
+    ar_im[np.where(spots[1] > 0)]  = [255,255,102]
+    
+    
+    
+    img = Image.fromarray(ar_im)
+    
+    #img_name_path = f'{con.MASTER_DIR}{name}_{my_ratio[0]}_{my_ratio[1]}.png'
+    
+    img.convert('RGBA')
+    #img.save(img_name_path)
+    
+    
+    new_dims = con.get_dim(width=1000, ratio=dims[2])
+    new_im = img.resize(new_dims[:2])
+    new_im.show()
+
+
+#
+draw_rules_to_img()
+
+
+'''
 rules = [gr.phi_grid(),
         rule_of_thirds(),
         gr.golden_triangles(),
         gr.golden_boxes(),
-        ]
+       ]
 
-spots = combine_rulez(rules)
+'''
+
+#spots = combine_rulez(rules)
 
 
 
 #spots = gr.golden_boxes()
-create_img(spots)#, flip=True)
+#create_img(spots)#, flip=True)
 
 
 

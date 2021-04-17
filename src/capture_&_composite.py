@@ -49,8 +49,8 @@ dims = constants.get_dim(height=temp_dims[0], width=temp_dims[1])
 
 
 #  create lines
-rules = [#gr.phi_grid(dims),
-        #compositions.rule_of_thirds(dims),
+rules = [gr.phi_grid(dims),
+        compositions.rule_of_thirds(dims),
         #gr.golden_triangles(dims),
         gr.golden_boxes(dims),
         ]
@@ -60,8 +60,12 @@ rules = [#gr.phi_grid(dims),
 # combine them to one array
 spots = compositions.combine_rulez(rules)
 
+
+new_dims = constants.get_dim(width=1000, ratio=dims[2])
+
+
 cv2.namedWindow("frame", cv2.WINDOW_NORMAL)
-cv2.resizeWindow('frame', 900, 700) 
+cv2.resizeWindow('frame', new_dims[0],new_dims[1]) 
 
 while(True):
     # Capture frame-by-frame
